@@ -24,6 +24,12 @@ kubectl apply -f ingress/nginx/ingress.yml
 kubectl apply -f ingress/traefik/ingress.yml
 ```
 
+### Kong 
+
+```bash
+kubectl apply -f ingress/kong/ingress.yml
+```
+
 # Deploy demo application for tests 
 
 ```bash
