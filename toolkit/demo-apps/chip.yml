@@ -1,16 +1,17 @@
----
 apiVersion: v1
 kind: Namespace
 metadata:
+  annotations:
+    linkerd.io/inject: enabled
   name: chip
 ---
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: chip
-  namespace: chip
   labels:
     app: chip
+  name: chip
+  namespace: chip
 spec:
   replicas: 3
   selector:
@@ -18,36 +19,52 @@ spec:
       app: chip
   template:
     metadata:
+      annotations:
+        linkerd.io/inject: enabled
       labels:
         app: chip
         name: chip
     spec:
-      terminationGracePeriodSeconds: 60
       containers:
       - image: fidelissauro/chip:v1
+        livenessProbe:
+          failureThreshold: 2
+          httpGet:
+            httpHeaders:
+            - name: Custom-Header
+              value: Awesome
+            path: /healthcheck
+            port: 8080
+          periodSeconds: 10
         name: chip
         ports:
-        - name: http
-          containerPort: 8080
+        - containerPort: 8080
+          name: http
         resources:
           requests:
-            cpu: "256m"
-            memory: "512m"
+            cpu: 256m
+            memory: 512m
+        startupProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          periodSeconds: 10
+      terminationGracePeriodSeconds: 60
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: chip
   namespace: chip
 spec:
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
   selector:
     app: chip
-  ports:
-    - protocol: TCP
-      port: 8080
-      name: web
   type: ClusterIP
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -56,7 +73,7 @@ metadata:
   namespace: chip
 spec:
   rules:
-  - host: chip.raj.ninja
+  - host: chip.local.cluster
     http:
       paths:
       - path: "/"
@@ -73,7 +90,7 @@ metadata:
   name: chip
   namespace: chip
 spec:
-  maxReplicas: 5
+  maxReplicas: 10
   minReplicas: 3
   metrics:
     - type: Resource
@@ -86,3 +103,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: chip
+---
