@@ -13,7 +13,7 @@ metadata:
   name: chip
   namespace: chip
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: chip
@@ -44,6 +44,9 @@ spec:
           requests:
             cpu: 256m
             memory: 512m
+          limits:
+            cpu: 512m
+            memory: 1024m            
         startupProbe:
           failureThreshold: 10
           httpGet:
@@ -91,14 +94,14 @@ metadata:
   namespace: chip
 spec:
   maxReplicas: 10
-  minReplicas: 3
+  minReplicas: 4
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 30
+          averageUtilization: 60
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
