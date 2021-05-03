@@ -18,6 +18,13 @@ kubectl apply -f toolkit/metric-server/metric-server.yml
 kubectl apply -f ingress/nginx/ingress.yml
 ```
 
+### Nginx in Daemonset Mode
+
+```bash
+kubectl apply -f ingress/nginx/ingress-daemonset.yml
+```
+
+
 ### Traefik
 
 ```bash
