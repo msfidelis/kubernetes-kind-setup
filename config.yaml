@@ -21,5 +21,25 @@ nodes:
     hostPort: 8080
     listenAddress: "0.0.0.0"
     protocol: TCP    
+  - containerPort: 15012
+    hostPort: 15012
+    listenAddress: "0.0.0.0"
+    protocol: TCP      
+  - containerPort: 15021
+    hostPort: 15021
+    listenAddress: "0.0.0.0"
+    protocol: TCP   
+  - containerPort: 15443
+    hostPort: 15443
+    listenAddress: "0.0.0.0"
+    protocol: TCP     
+  - containerPort: 31624
+    hostPort: 31624
+    listenAddress: "0.0.0.0"
+    protocol: TCP     
+  - containerPort: 31027
+    hostPort: 31027
+    listenAddress: "0.0.0.0"
+    protocol: TCP                     
 - role: worker
 - role: worker
