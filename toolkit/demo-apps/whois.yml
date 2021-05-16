@@ -72,7 +72,7 @@ metadata:
   name: whois
   namespace: whois
 spec:
-  maxReplicas: 5
+  maxReplicas: 10
   minReplicas: 3
   metrics:
     - type: Resource
@@ -85,3 +85,22 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: whois
+# ---
+# # Keda HPA
+# apiVersion: keda.sh/v1alpha1
+# kind: ScaledObject
+# metadata:
+#   name: whois-cron-scale
+#   namespace: whois
+# spec:
+#   scaleTargetRef:
+#     name: whois
+#   minReplicaCount: 3
+#   maxReplicaCount: 15
+#   triggers:
+#   - type: cron
+#     metadata:
+#       timezone: America/Sao_Paulo
+#       start: 32 * * * *
+#       end: 40 * * * *
+#       desiredReplicas: "10"
