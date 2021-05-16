@@ -10,6 +10,12 @@ kind create cluster --name demo --config config.yaml
 kubectl apply -f toolkit/metric-server/metric-server.yml
 ```
 
+# Deploy Keda Autoscaler
+
+```bash
+kubectl apply -f toolkit/keda/keda-2.2.0.yaml
+```
+
 # Deploy Ingress Controller
 
 ### Nginx
