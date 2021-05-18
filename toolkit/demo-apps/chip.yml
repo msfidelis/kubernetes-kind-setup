@@ -26,7 +26,7 @@ spec:
         name: chip
     spec:
       containers:
-      - image: fidelissauro/chip:v1
+      - image: fidelissauro/chip:v2
         livenessProbe:
           failureThreshold: 2
           httpGet:

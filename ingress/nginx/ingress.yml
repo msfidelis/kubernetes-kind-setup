@@ -263,13 +263,15 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"     
   labels:
     helm.sh/chart: ingress-nginx-3.23.0
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.44.0
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: controller
+    app.kubernetes.io/component: controller 
   name: ingress-nginx-controller
   namespace: ingress-nginx
 spec:
@@ -283,6 +285,37 @@ spec:
       port: 443
       protocol: TCP
       targetPort: https
+    - name: prometheus
+      protocol: TCP  
+      port: 10254
+      targetPort: 10254     
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/component: controller
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"     
+  labels:
+    helm.sh/chart: ingress-nginx-3.23.0
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.44.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller 
+  name: ingress-nginx-controller-metrics
+  namespace: ingress-nginx
+spec:
+  type: ClusterIP
+  ports:
+  - name: metrics
+    port: 10254
+    protocol: TCP
+    targetPort: metrics    
   selector:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
@@ -292,6 +325,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"    
   labels:
     helm.sh/chart: ingress-nginx-3.23.0
     app.kubernetes.io/name: ingress-nginx
@@ -315,6 +351,9 @@ spec:
   minReadySeconds: 0
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"        
       labels:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/instance: ingress-nginx
@@ -323,7 +362,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: k8s.gcr.io/ingress-nginx/controller:v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a
+          image: k8s.gcr.io/ingress-nginx/controller:v0.46.0
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -338,7 +377,7 @@ spec:
             - --validating-webhook=:8443
             - --validating-webhook-certificate=/usr/local/certificates/cert
             - --validating-webhook-key=/usr/local/certificates/key
-            - --publish-status-address=localhost
+            - --publish-status-address=0.0.0.0
           securityContext:
             capabilities:
               drop:
@@ -390,6 +429,9 @@ spec:
             - name: webhook
               containerPort: 8443
               protocol: TCP
+            - name: metrics
+              containerPort: 10254
+              protocol: TCP              
           volumeMounts:
             - name: webhook-cert
               mountPath: /usr/local/certificates/
