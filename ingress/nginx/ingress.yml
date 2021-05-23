@@ -285,7 +285,7 @@ spec:
       port: 443
       protocol: TCP
       targetPort: https
-    - name: prometheus
+    - name: metrics
       protocol: TCP  
       port: 10254
       targetPort: 10254     

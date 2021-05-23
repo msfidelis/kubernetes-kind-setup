@@ -21,6 +21,8 @@ spec:
     metadata:
       annotations:
         linkerd.io/inject: enabled
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"           
       labels:
         app: chip
         name: chip
@@ -28,29 +30,29 @@ spec:
       containers:
       - image: fidelissauro/chip:v2
         livenessProbe:
-          failureThreshold: 2
+          failureThreshold: 10
           httpGet:
             httpHeaders:
             - name: Custom-Header
               value: Awesome
-            path: /healthcheck
+            path: /liveness
             port: 8080
           periodSeconds: 10
         name: chip
         ports:
         - containerPort: 8080
           name: http
-        resources:
-          requests:
-            cpu: 256m
-            memory: 512m
-          limits:
-            cpu: 512m
-            memory: 1024m            
+        # resources:
+        #   requests:
+        #     cpu: 256m
+        #     memory: 512m
+        #   limits:
+        #     cpu: 1000
+        #     memory: 2048        
         startupProbe:
           failureThreshold: 10
           httpGet:
-            path: /healthcheck
+            path: /readiness
             port: 8080
           periodSeconds: 10
       terminationGracePeriodSeconds: 60
