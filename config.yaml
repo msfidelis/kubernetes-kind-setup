@@ -32,7 +32,15 @@ nodes:
   - containerPort: 15443
     hostPort: 15443
     listenAddress: "0.0.0.0"
-    protocol: TCP     
+    protocol: TCP
+  - containerPort: 30080
+    hostPort: 30080
+    listenAddress: "0.0.0.0"
+    protocol: TCP   
+  - containerPort: 30443
+    hostPort: 30443
+    listenAddress: "0.0.0.0"
+    protocol: TCP                
   - containerPort: 31624
     hostPort: 31624
     listenAddress: "0.0.0.0"
