@@ -56,12 +56,13 @@ metadata:
   namespace: whois
 spec:
   rules:
-  - http:
+  - host: whois.local.cluster
+    http:
       paths:
-      - path: "/whois"
+      - path: "/"
         pathType: Prefix
         backend:
-          service: 
+          service:
             name: whois
             port:
               number: 8080

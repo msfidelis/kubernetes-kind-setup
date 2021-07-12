@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: prometheus
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 16.0.1
+    chart: kube-prometheus-stack-16.0.1
+    heritage: Helm
+    release: prometheus
+  name: prometheus-chip
+  namespace: prometheus
+spec:
+  endpoints:
+  - honorLabels: true
+    port: web
+  jobLabel: app.kubernetes.io/name
+  namespaceSelector:
+    matchNames:
+    - chip
+  selector:
+    matchLabels:
+        app.kubernetes.io/name: chip
