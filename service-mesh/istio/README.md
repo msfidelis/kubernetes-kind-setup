@@ -23,6 +23,12 @@ helm  install istio-egress -n istio-system charts/istio-egress
 helm  install istio-operator -n istio-system charts/istio-operator
 ```
 
+# Install Addons via Helm
+
+```sh 
+helm  install kiali -n istio-system charts/istio-kiali
+```
+
 # Apply Nodeport service to expose kind ports 
 
 ```sh
