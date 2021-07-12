@@ -16,10 +16,11 @@ istioctl install -y
 
 ```sh 
 kubectl create ns istio-system
-helm install istio-base -n istio-system manifests/charts/base
-helm install istio-discovery -n istio-system manifests/charts/istio-control/istio-discovery/
-helm  install istio-ingress -n istio-system manifests/charts/gateways/istio-ingress
-helm  install istio-egress -n istio-system manifests/charts/gateways/istio-egress
+helm  install istio-base -n istio-system charts/base
+helm  install istio-discovery -n istio-system charts/istio-discovery/
+helm  install istio-ingress -n istio-system charts/istio-ingress
+helm  install istio-egress -n istio-system charts/istio-egress
+helm  install istio-operator -n istio-system charts/istio-operator
 ```
 
 # Apply Nodeport service to expose kind ports 
