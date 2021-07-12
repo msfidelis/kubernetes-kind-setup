@@ -73,5 +73,5 @@ metadata:
 data:
   istio-extension-dashboard.json: '{{ .Files.Get "dashboards/istio-extension-dashboard.json" }}'
   istio-mesh-dashboard.json: '{{ .Files.Get "dashboards/istio-mesh-dashboard.json" }}'
-  # istio-service-dashboard.json: '{{ .Files.Get "dashboards/istio-service-dashboard.json" }}'
-  # istio-workload-dashboard.json: '{{ .Files.Get "dashboards/istio-workload-dashboard.json" }}'
+  istio-service-dashboard.json: '{{ .Files.Get "dashboards/istio-service-dashboard.json" }}'
+  istio-workload-dashboard.json: '{{ .Files.Get "dashboards/istio-workload-dashboard.json" }}'

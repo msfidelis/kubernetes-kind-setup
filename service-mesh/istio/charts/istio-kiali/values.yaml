@@ -84,3 +84,6 @@ affinity: {}
 
 VirtualService:
   host: kiali.local.cluster
+
+Grafana:
+  host: grafana.kiali.local.cluster
