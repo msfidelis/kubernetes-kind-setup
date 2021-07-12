@@ -62,6 +62,11 @@ data:
     external_services:
       custom_dashboards:
         enabled: true
+      grafana: 
+        enabled: false
+        url: http://grafana.istio-system.svc.cluster.local:3000
+      tracing:
+        enabled: true        
     identity:
       cert_file: ""
       private_key_file: ""
