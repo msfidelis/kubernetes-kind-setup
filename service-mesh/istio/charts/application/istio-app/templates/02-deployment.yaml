@@ -34,6 +34,7 @@ spec:
             value: {{ $val | quote }}
         {{- end }}
 
+        {{ if .Values.probe.startup.enabled }}
         startupProbe:
           failureThreshold: {{ .Values.probe.startup.failureThreshold }}
           httpGet:
@@ -43,7 +44,9 @@ spec:
             path: {{ .Values.probe.startup.path }}
             port: {{ .Values.application.port }}
           periodSeconds: {{ .Values.probe.startup.periodSeconds }}
+        {{ end }}
 
+        {{ if .Values.probe.liveness.enabled }}
         livenessProbe:
           failureThreshold: {{ .Values.probe.liveness.failureThreshold }}
           httpGet:
@@ -53,7 +56,9 @@ spec:
             path: {{ .Values.probe.liveness.path }}
             port: {{ .Values.application.port }}
           periodSeconds: {{ .Values.probe.liveness.periodSeconds }}
+        {{ end }}
 
+        {{ if .Values.probe.readiness.enabled }}
         readinessProbe:
           failureThreshold: {{ .Values.probe.readiness.failureThreshold }}
           httpGet:
@@ -63,7 +68,8 @@ spec:
             path: {{ .Values.probe.readiness.path }}
             port: {{ .Values.application.port }}
           periodSeconds: {{ .Values.probe.readiness.periodSeconds }}          
-
+        {{ end }}
+        
         resources:
           requests:
             cpu: {{ .Values.resources.requests.cpu }}

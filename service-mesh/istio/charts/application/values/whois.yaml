@@ -1,8 +1,8 @@
 application:
-  name: chip
-  namespace: chip
+  name: whois
+  namespace: whois
   version: "1.0"
-  image: fidelissauro/chip:latest
+  image: fidelissauro/whois:latest
   kind: deployment
   port: 8080
   protocol: HTTP
@@ -13,8 +13,8 @@ env:
   VERSION: "v1"
 
 replicas: 
-  desired: 2
-  minimum: 2
+  desired: 1
+  minimum: 1
   maximum: 6
 
 resources:
@@ -33,17 +33,17 @@ probe:
     periodSeconds: 10
   liveness:
     enabled: false
-    path: /liveness
+    path: /healthcheck
     failureThreshold: 10
     periodSeconds: 10
   readiness:
     enabled: true
-    path: /readiness
+    path: /healthcheck
     failureThreshold: 10
     periodSeconds: 10
 
 prometheus:
-  scrape: true
+  scrape: false
   path: /metrics
 
 autoscaling:
@@ -56,5 +56,5 @@ autoscaling:
       averageUtilization: 80
 
 ingress:
-  host: chip.local.cluster
+  host: whois.local.cluster
 

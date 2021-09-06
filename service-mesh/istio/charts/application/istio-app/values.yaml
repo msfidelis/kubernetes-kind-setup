@@ -9,6 +9,7 @@ application:
 
 env:          
   FOO: "BAR"
+  PING: "PONG"
   ENVIRONMENT: "dev"
 
 replicas: 
@@ -26,20 +27,24 @@ resources:
 
 probe:
   startup:
+    enabled: false
     path: /
     failureThreshold: 10
     periodSeconds: 10
   liveness:
+    enabled: false
     path: /
     failureThreshold: 10
     periodSeconds: 10
   readiness:
+    enabled: true
     path: /
     failureThreshold: 10
     periodSeconds: 10
 
 prometheus:
   scrape: false
+  path: /metrics
 
 autoscaling:
   hpa:
