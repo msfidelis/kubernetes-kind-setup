@@ -88,7 +88,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "whois.local.cluster"
+    - "whois.k8s.raj.ninja"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -97,7 +97,7 @@ metadata:
   namespace: whois
 spec:
   hosts:
-  - "whois.local.cluster"
+  - "whois.k8s.raj.ninja"
   gateways:
   - whois-gateway
   http:

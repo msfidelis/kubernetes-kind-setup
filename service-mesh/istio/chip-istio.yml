@@ -13,7 +13,7 @@ metadata:
   name: chip
   namespace: chip
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: chip
@@ -29,7 +29,10 @@ spec:
         version: v1
     spec:
       containers:
-      - image: fidelissauro/chip:v1
+      - image: fidelissauro/chip:latest
+        env:
+        - name: VERSION
+          value: "1.0"
         livenessProbe:
           failureThreshold: 10
           httpGet:
@@ -49,7 +52,7 @@ spec:
         #     memory: 512m
         #   limits:
         #     cpu: 1000
-        #     memory: 2048        
+        #     memory: 2048      
         startupProbe:
           failureThreshold: 10
           httpGet:
@@ -85,7 +88,7 @@ metadata:
   namespace: chip
 spec:
   maxReplicas: 10
-  minReplicas: 2
+  minReplicas: 4
   metrics:
     - type: Resource
       resource:
@@ -112,7 +115,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "chip.local.cluster"
+    - "chip.k8s.raj.ninja"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -121,7 +124,7 @@ metadata:
   namespace: chip
 spec:
   hosts:
-  - "chip.local.cluster"
+  - "chip.k8s.raj.ninja"
   gateways:
   - chip-gateway
   http:

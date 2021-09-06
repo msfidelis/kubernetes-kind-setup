@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.application.name }}
+  name: {{ .Values.application.name }}
+  namespace: {{ .Values.application.namespace }}
+spec:
+  replicas: {{ .Values.replicas.desired }}
+  selector:
+    matchLabels:
+      app: {{ .Values.application.name }}
+  template:
+    metadata:
+      annotations:
+        istio-injection: enabled
+        prometheus.io/scrape: "{{ .Values.prometheus.scrape }}"
+        prometheus.io/port: "{{ .Values.application.port }}"           
+      labels:
+        app:      {{ .Values.application.name }}
+        # version:  "{{ .Values.application.version }}"
+    spec:
+      containers:
+      - image:  {{ .Values.application.image }}
+        name:   {{ .Values.application.name }}
+
+        ports:
+        - containerPort: {{ .Values.application.port }}
+          name: http
+
+        env:          
+        {{- range $key, $val := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $val | quote }}
+        {{- end }}
+
+        startupProbe:
+          failureThreshold: {{ .Values.probe.startup.failureThreshold }}
+          httpGet:
+            httpHeaders:
+            - name: Kubernetes-Healthcheck
+              value: Startup
+            path: {{ .Values.probe.startup.path }}
+            port: {{ .Values.application.port }}
+          periodSeconds: {{ .Values.probe.startup.periodSeconds }}
+
+        livenessProbe:
+          failureThreshold: {{ .Values.probe.liveness.failureThreshold }}
+          httpGet:
+            httpHeaders:
+            - name: Kubernetes-Healthcheck
+              value: Liveness
+            path: {{ .Values.probe.liveness.path }}
+            port: {{ .Values.application.port }}
+          periodSeconds: {{ .Values.probe.liveness.periodSeconds }}
+
+        readinessProbe:
+          failureThreshold: {{ .Values.probe.readiness.failureThreshold }}
+          httpGet:
+            httpHeaders:
+            - name: Kubernetes-Healthcheck
+              value: Readiness
+            path: {{ .Values.probe.readiness.path }}
+            port: {{ .Values.application.port }}
+          periodSeconds: {{ .Values.probe.readiness.periodSeconds }}          
+
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}   
+
+      # terminationGracePeriodSeconds: 1

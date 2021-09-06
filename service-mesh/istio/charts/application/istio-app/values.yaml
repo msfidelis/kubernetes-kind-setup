@@ -1,0 +1,55 @@
+application:
+  name: echo
+  namespace: echo
+  version: "1.0"
+  image: nginx:1.21.1-alpine
+  kind: deployment
+  port: 80
+  protocol: HTTP
+
+env:          
+  FOO: "BAR"
+  ENVIRONMENT: "dev"
+
+replicas: 
+  desired: 2
+  minimum: 2
+  maximum: 6
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi  
+
+probe:
+  startup:
+    path: /
+    failureThreshold: 10
+    periodSeconds: 10
+  liveness:
+    path: /
+    failureThreshold: 10
+    periodSeconds: 10
+  readiness:
+    path: /
+    failureThreshold: 10
+    periodSeconds: 10
+
+prometheus:
+  scrape: false
+
+autoscaling:
+  hpa:
+    cpu: 
+      enabled: true
+      averageUtilization: 80
+    memory:
+      enabled: false
+      averageUtilization: 80
+
+ingress:
+  host: echo.local.cluster
+
