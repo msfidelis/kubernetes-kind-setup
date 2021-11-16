@@ -46,8 +46,8 @@ kubectl apply -f ingress/kong/ingress.yml
 # Deploy demo application for tests 
 
 ```bash
-kubectl apply -f toolkit/demo-apps/whois.yml
-kubectl apply -f toolkit/demo-apps/chip.yml
+kubectl apply -f toolkit/demo-apps/whois/whois.yml
+kubectl apply -f toolkit/demo-apps/chip/chip.yml
 ```
 
 ```bash
