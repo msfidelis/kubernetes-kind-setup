@@ -46,12 +46,12 @@ kubectl apply -f ingress/kong/ingress.yml
 # Deploy demo application for tests 
 
 ```bash
-kubectl apply -f toolkit/demo-apps/whois.yml
-kubectl apply -f toolkit/demo-apps/chip.yml
+kubectl apply -f toolkit/demo-apps/whois/whois.yml
+kubectl apply -f toolkit/demo-apps/chip/chip.yml
 ```
 
 ```bash
-curl 0.0.0.0:80/whois/google.com -i
+curl 0.0.0.0:80/whois/google.com -H "Host: whois.local.cluster" -i
 HTTP/1.1 200 OK
 Date: Wed, 24 Mar 2021 20:18:41 GMT
 Content-Type: application/json
@@ -63,7 +63,7 @@ Connection: keep-alive
 
 
 ```bash
-curl 0.0.0.0:80/system -H "Host: chip.raj.ninja" -i
+curl 0.0.0.0:80/system -H "Host: chip.local.cluster" -i
 HTTP/1.1 200 OK
 Date: Wed, 24 Mar 2021 20:24:09 GMT
 Content-Type: application/json; charset=utf-8
