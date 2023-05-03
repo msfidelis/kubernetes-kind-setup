@@ -1,7 +1,7 @@
 # Creating a custom cluster 
 
 ```bash
-kind create cluster --name demo --config config.yaml
+kind create cluster --name kind --config config.yaml
 ```
 
 # Deploy Metric Server 
