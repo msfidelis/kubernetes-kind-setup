@@ -57,6 +57,7 @@ nodes:
 - role: worker
 - role: worker
 networking:
-  disableDefaultCNI: false
-  podSubnet: "10.10.0.0/16"
-  serviceSubnet: "10.11.0.0/16"
+  # disableDefaultCNI: true # Comentar se não usar Cilium
+  # kubeProxyMode: none # Comentar se não usar Cilium
+  # podSubnet: "10.10.0.0/16"
+  # serviceSubnet: "10.11.0.0/16"
