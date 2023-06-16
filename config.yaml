@@ -55,7 +55,8 @@ nodes:
     protocol: TCP                     
 - role: worker
 - role: worker
+- role: worker
 networking:
-  disableDefaultCNI: true
+  disableDefaultCNI: false
   podSubnet: "10.10.0.0/16"
   serviceSubnet: "10.11.0.0/16"

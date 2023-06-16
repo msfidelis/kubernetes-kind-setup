@@ -1,7 +1,7 @@
 # Creating a custom cluster 
 
 ```bash
-kind create cluster --name kind --config config.yaml
+kind create cluster --config config.yaml
 ```
 
 # Deploy Metric Server 
@@ -14,6 +14,25 @@ kubectl apply -f toolkit/metric-server/metric-server.yml
 
 ```bash
 kubectl apply -f toolkit/keda/keda-2.2.0.yaml
+```
+
+# Deploy Cilium 
+
+```bash
+helm repo add cilium https://helm.cilium.io/
+
+helm install cilium cilium/cilium --version 1.13 \
+--namespace kube-system \
+--set kubeProxyReplacement=strict \
+--set ingressController.enabled=true \
+--set ingressController.service.type=NodePort \
+--set ingressController.service.insecureNodePort=30080 \
+--set ingressController.service.secureNodePort=30443 \
+--set ingressController.loadbalancerMode=shared \
+--set hubble.relay.enabled=true \
+--set hubble.ui.enabled=true \
+--set loadBalancer.l7.backend=envoy \
+--set-string extraConfig.enable-envoy-config=true
 ```
 
 # Deploy Ingress Controller
@@ -42,6 +61,8 @@ kubectl apply -f ingress/traefik/ingress.yml
 ```bash
 kubectl apply -f ingress/kong/ingress.yml
 ```
+
+
 
 # Deploy demo application for tests 
 
