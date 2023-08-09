@@ -7,7 +7,19 @@ delete:
 	kind delete cluster
 
 jaeger:
-	kubectl apply -f toolkit/jaeger
+	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+
+	helm install jaeger jaegertracing/jaeger \
+	--namespace=jaeger \
+	--create-namespace=true \
+	--set provisionDataStore.cassandra=false \
+	--set allInOne.enabled=true \
+	--set storage.type=none \
+	--set agent.enabled=false \
+	--set collector.enabled=false \
+	--set query.enabled=false 
+
+	# kubectl apply -f toolkit/jaeger/
 
 metrics-server:
 	kubectl apply -f toolkit/metric-server/
@@ -15,9 +27,7 @@ metrics-server:
 prometheus:
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
-	kubectl create ns prometheus
-	kubectl create secret generic additional-scrape-configs --from-file=toolkit/prometheus-stack/scrape_configs.yaml --dry-run=client -oyaml > ./toolkit/prometheus-stack/additional-scrape-configs.yaml
-	kubectl apply -f toolkit/prometheus-stack/additional-scrape-configs.yaml -n prometheus
+	# kubectl create ns prometheus ;
 
 	helm install prometheus prometheus-community/kube-prometheus-stack \
 	--version 45.8.0 \
@@ -28,7 +38,11 @@ prometheus:
 	--set prometheus.additionalScrapeConfigs.type=external \
 	--set prometheus.additionalScrapeConfigs.external.name=additional-scrape-configs \
 	--set prometheus.additionalScrapeConfigs.external.key=scrape_configs.yaml \
-	--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+	--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false ;
+
+	kubectl create secret generic additional-scrape-configs --from-file=toolkit/prometheus-stack/scrape_configs.yaml --dry-run=client -oyaml > ./toolkit/prometheus-stack/additional-scrape-configs.yaml
+	kubectl apply -f toolkit/prometheus-stack/additional-scrape-configs.yaml -n prometheus
+	kubectl apply -f toolkit/prometheus-stack/grafana-ingress.yml
 
 nats:
 	helm repo add nats https://nats-io.github.io/k8s/helm/charts/

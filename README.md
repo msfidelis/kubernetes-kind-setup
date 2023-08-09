@@ -21,16 +21,24 @@ kubectl apply -f toolkit/keda/keda-2.2.0.yaml
 ```bash
 helm repo add cilium https://helm.cilium.io/
 
-helm install cilium cilium/cilium --version 1.13 \
+helm install cilium cilium/cilium --version 1.14 \
 --namespace kube-system \
 --set kubeProxyReplacement=strict \
+--set externalIPs.enabled=true \
+--set nodePort.enabled=true \
+--set hostPort.enabled=true \
+--set hostServices.enabled=true \
 --set ingressController.enabled=true \
 --set ingressController.service.type=NodePort \
 --set ingressController.service.insecureNodePort=30080 \
 --set ingressController.service.secureNodePort=30443 \
 --set ingressController.loadbalancerMode=shared \
+--set prometheus.enabled=true \
+--set operator.prometheus.enabled=true \
 --set hubble.relay.enabled=true \
 --set hubble.ui.enabled=true \
+--set hubble.metrics.enableOpenMetrics=true \
+--set hubble.metrics.enabled="{dns,drop,tcp,flow,port-distribution,icmp,httpV2:exemplars=true;labelsContext=source_ip\\,source_namespace\\,source_workload\\,destination_ip\\,destination_namespace\\,destination_workload\\,traffic_direction}" \
 --set loadBalancer.l7.backend=envoy \
 --set-string extraConfig.enable-envoy-config=true
 ```

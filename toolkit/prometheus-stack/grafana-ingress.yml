@@ -1,31 +1,70 @@
-apiVersion: extensions/v1beta1
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: grafana
+#   namespace: prometheus
+#   annotations:
+#     kubernetes.io/ingress.class: 'nginx'
+# spec:
+#   rules:
+#     - host: grafana.k8s.cluster.local
+#       http:
+#         paths:
+#           - backend:
+#               serviceName: prometheus-grafana
+#               servicePort: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: prometheus
+#   namespace: prometheus
+#   annotations:
+#     kubernetes.io/ingress.class: 'nginx'
+# spec:
+#   rules:
+#     - host: prometheus.k8s.cluster.local
+#       http:
+#         paths:
+#           - backend:
+#               serviceName: prometheus-kube-prometheus-prometheus
+#               servicePort: 9090
+# ---
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grafana
   namespace: prometheus
-  annotations:
-    kubernetes.io/ingress.class: 'nginx'
 spec:
+  ingressClassName: cilium
   rules:
-    - host: grafana.local.cluster
-      http:
-        paths:
-          - backend:
-              serviceName: prometheus-grafana
-              servicePort: 80
+  - host: grafana.k8s.cluster.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-grafana
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: prometheus
   namespace: prometheus
-  annotations:
-    kubernetes.io/ingress.class: 'nginx'
 spec:
+  ingressClassName: cilium
   rules:
-    - host: prometheus.local.cluster
-      http:
-        paths:
-          - backend:
-              serviceName: prometheus-kube-prometheus-prometheus
-              servicePort: 9090
+  - host: prometheus.k8s.cluster.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-prometheus
+            port:
+              number: 9090
+        path: /
+        pathType: Prefix
