@@ -1,10 +1,17 @@
-.PHONY: create delete cilium jaeger prometheus
+.PHONY: create delete cilium jaeger prometheus istio
 
 create:
 	kind create cluster --config config.yaml
 
 delete: 
 	kind delete cluster
+
+istio:
+	helm upgrade istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace=true --install
+	helm upgrade istiod istio/istiod -n istio-system --wait  --install
+	helm upgrade istio-ingress istio/gateway -n istio-system --install
+	kubectl apply -f service-mesh/istio/istio-nodeport-service.yml 
+	kubectl apply -f service-mesh/istio/chip-istio.yml
 
 jaeger:
 	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts

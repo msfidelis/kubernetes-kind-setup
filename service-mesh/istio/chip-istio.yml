@@ -29,7 +29,7 @@ spec:
         version: v1
     spec:
       containers:
-      - image: fidelissauro/chip:latest
+      - image: fidelissauro/chip:v2
         env:
         - name: VERSION
           value: "1.0"
@@ -81,7 +81,7 @@ spec:
     app: chip
   type: ClusterIP
 ---
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: chip
@@ -111,11 +111,11 @@ spec:
     istio: ingressgateway # use istio default controller
   servers:
   - port:
-      number: 80
+      number: 15090
       name: http
       protocol: HTTP
     hosts:
-    - "chip.k8s.raj.ninja"
+    - "chip.k8s.cluster.local"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -124,7 +124,7 @@ metadata:
   namespace: chip
 spec:
   hosts:
-  - "chip.k8s.raj.ninja"
+  - "chip.k8s.cluster.local"
   gateways:
   - chip-gateway
   http:

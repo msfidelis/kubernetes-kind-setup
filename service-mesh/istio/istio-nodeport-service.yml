@@ -5,14 +5,14 @@ metadata:
     meta.helm.sh/release-name: istio-ingress
     meta.helm.sh/release-namespace: istio-system
   labels:
-    app: istio-ingressgateway
+    app: istio-ingress
     app.kubernetes.io/managed-by: Helm
     install.operator.istio.io/owning-resource: unknown
     istio: ingressgateway
     istio.io/rev: default
     operator.istio.io/component: IngressGateways
     release: istio-ingress
-  name: istio-ingressgateway-nodeport
+  name: istio-ingress-nodeport
   namespace: istio-system
 spec:
   externalTrafficPolicy: Cluster
@@ -24,7 +24,7 @@ spec:
     targetPort: 15021
   - name: http2
     nodePort: 30080
-    port: 80
+    port: 15090
     protocol: TCP
     targetPort: 8080
   - name: https
@@ -33,7 +33,7 @@ spec:
     protocol: TCP
     targetPort: 8443
   selector:
-    app: istio-ingressgateway
-    istio: ingressgateway
+    app: istio-ingress
+    istio: ingress
   sessionAffinity: None
   type: NodePort

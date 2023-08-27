@@ -2,7 +2,7 @@ application:
   name: chip
   namespace: chip
   version: "1.0"
-  image: fidelissauro/chip:latest
+  image: fidelissauro/chip:v2
   kind: deployment
   port: 8080
   protocol: HTTP
