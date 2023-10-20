@@ -17,16 +17,11 @@ metadata:
 spec:
   externalTrafficPolicy: Cluster
   ports:
-  - name: status-port
-    nodePort: 30021
-    port: 15021
-    protocol: TCP
-    targetPort: 15021
   - name: http2
     nodePort: 30080
-    port: 15090
+    port: 80
     protocol: TCP
-    targetPort: 8080
+    targetPort: 80
   - name: https
     nodePort: 30443
     port: 443

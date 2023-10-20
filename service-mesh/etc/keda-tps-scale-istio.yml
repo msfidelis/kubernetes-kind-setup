@@ -1,0 +1,20 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: chip-tps
+  namespace: chip
+spec:
+  scaleTargetRef:
+    name: chip
+  pollingInterval: 30  
+  cooldownPeriod:  30  
+  minReplicaCount: 2
+  maxReplicaCount: 30 
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus-kube-prometheus-prometheus.prometheus.svc.cluster.local:9090
+      metricName: istio_requests_total
+      threshold: "5"
+      query: |
+        sum(rate(istio_requests_total{destination_service_name="chip",destination_service_namespace="chip"}[2m]))

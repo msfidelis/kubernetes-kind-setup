@@ -1,0 +1,68 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: generic-stats-monitor
+  namespace: prometheus
+  labels:
+    monitoring: istio-proxies
+    release: istio
+spec:
+  selector:
+    matchExpressions:
+    - {key: istio-prometheus-ignore, operator: DoesNotExist}
+  namespaceSelector:
+    any: true
+  jobLabel: generic-stats
+  podMetricsEndpoints:
+  - path: /metrics
+    interval: 15s
+    relabelings:
+    - action: keep
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-monitor
+  namespace: prometheus
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      istio: pilot 
+  endpoints:
+  - port: http-monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-ingress-monitor
+  namespace: prometheus
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      istio: ingress 
+  endpoints:
+  - port: http-monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-envoy-monitor
+  namespace: prometheus
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchExpressions:
+    - {key: app, operator: Exists}
+  endpoints:
+  - targetPort: 15090
+    interval: 15s
+    path: /stats/prometheus

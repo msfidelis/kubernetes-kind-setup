@@ -7,6 +7,9 @@ delete:
 	kind delete cluster
 
 istio:
+	helm repo add istio https://istio-release.storage.googleapis.com/charts
+	helm repo update
+
 	helm upgrade istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace=true --install
 	helm upgrade istiod istio/istiod -n istio-system --wait  --install
 	helm upgrade istio-ingress istio/gateway -n istio-system --install
@@ -15,8 +18,8 @@ istio:
 
 jaeger:
 	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-
-	helm install jaeger jaegertracing/jaeger \
+	helm repo update
+	helm upgrade jaeger jaegertracing/jaeger \
 	--namespace=jaeger \
 	--create-namespace=true \
 	--set provisionDataStore.cassandra=false \
@@ -24,7 +27,8 @@ jaeger:
 	--set storage.type=none \
 	--set agent.enabled=false \
 	--set collector.enabled=false \
-	--set query.enabled=false 
+	--set query.enabled=false \
+	--install
 
 	# kubectl apply -f toolkit/jaeger/
 
@@ -33,23 +37,16 @@ metrics-server:
 
 prometheus:
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-
-	# kubectl create ns prometheus ;
-
-	helm install prometheus prometheus-community/kube-prometheus-stack \
+	helm repo update
+	helm upgrade prometheus prometheus-community/kube-prometheus-stack \
 	--version 45.8.0 \
 	--namespace=prometheus \
 	--create-namespace=true \
-	--set fullnameOverride=prometheus \
-	--set prometheus.additionalScrapeConfigs.enabled=true \
-	--set prometheus.additionalScrapeConfigs.type=external \
-	--set prometheus.additionalScrapeConfigs.external.name=additional-scrape-configs \
-	--set prometheus.additionalScrapeConfigs.external.key=scrape_configs.yaml \
-	--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false ;
+	--install \
+	-f toolkit/prometheus-stack/values.yml
 
-	kubectl create secret generic additional-scrape-configs --from-file=toolkit/prometheus-stack/scrape_configs.yaml --dry-run=client -oyaml > ./toolkit/prometheus-stack/additional-scrape-configs.yaml
-	kubectl apply -f toolkit/prometheus-stack/additional-scrape-configs.yaml -n prometheus
-	kubectl apply -f toolkit/prometheus-stack/grafana-ingress.yml
+	kubectl apply -f toolkit/prometheus-stack/podmonitor.yml -n prometheus
+
 
 nats:
 	helm repo add nats https://nats-io.github.io/k8s/helm/charts/
@@ -63,6 +60,11 @@ nats:
 	--set nats.jetstream.fileStorage.enabled=true \
 	--set nats.jetstream.fileStorage.size=1Gi \
 	--set nats.jetstream.fileStorage.storageDirectory=/data/
+
+keda: metrics-server
+	helm repo add kedacore https://kedacore.github.io/charts
+	helm repo update
+	helm upgrade keda kedacore/keda --namespace keda --create-namespace=true --install
 
 cilium: jaeger
 	kubectl apply -f service-mesh/cilium
