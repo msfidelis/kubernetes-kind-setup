@@ -20,7 +20,6 @@ spec:
   template:
     metadata:
       annotations:
-        istio-injection: enabled
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"           
       labels:
@@ -46,13 +45,10 @@ spec:
         ports:
         - containerPort: 8080
           name: http
-        # resources:
-        #   requests:
-        #     cpu: 256m
-        #     memory: 512m
-        #   limits:
-        #     cpu: 1000
-        #     memory: 2048      
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512m     
         startupProbe:
           failureThreshold: 10
           httpGet:
@@ -141,3 +137,50 @@ spec:
       attempts: 4
       perTryTimeout: 2s
       retryOn: gateway-error,connect-failure,refused-stream,5xx
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: chip-retry-counter
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: chip
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_OUTBOUND
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.router"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.lua
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+          inlineCode: |
+            function envoy_on_request(request_handle)
+              local retries = request_handle:streamInfo():dynamicMetadata():get("envoy.retry_policy")["num_retries"]
+              if retries then
+                request_handle:headers():add("x-envoy-retry-count", retries)
+              end
+            end
+# ---
+# apiVersion: telemetry.istio.io/v1alpha1
+# kind: Telemetry
+# metadata:
+#   name: retry-counter
+#   namespace: istio-system
+# spec:
+#   metrics:
+#   - providers:
+#     - name: prometheus
+#       tagOverrides:
+#         retry-count:
+#           operation: INSERT
+#           value: request.headers["x-envoy-retry-count"]

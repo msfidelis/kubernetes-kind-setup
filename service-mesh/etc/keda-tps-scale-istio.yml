@@ -1,20 +1,27 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: chip-tps
+  name: chip-high-tps
   namespace: chip
 spec:
   scaleTargetRef:
     name: chip
-  minReplicaCount: 2
-  maxReplicaCount: 30
-  pollingInterval: 30  
-  cooldownPeriod:  30   
+  minReplicaCount: 3
+  maxReplicaCount: 200
+  pollingInterval: 10  
+  cooldownPeriod:  30
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 60
+        scaleUp:
+          stabilizationWindowSeconds: 60          
   triggers:
   - type: prometheus
     metadata:
       serverAddress: http://prometheus-kube-prometheus-prometheus.prometheus.svc.cluster.local:9090
       metricName: istio_requests_total
-      threshold: "1"
+      threshold: "10" # <---- Quantidade de requisições por pod
       query: |
-        sum(rate(istio_requests_total{destination_service_name="chip",destination_service_namespace="chip"}[2m]))
+        sum(rate(istio_requests_total{destination_service_name="chip"}[1m]))
