@@ -32,6 +32,17 @@ jaeger:
 
 	# kubectl apply -f toolkit/jaeger/
 
+nginx:
+	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo update
+	helm upgrade ingress-nginx ingress-nginx/ingress-nginx \
+	--set controller.service.internal.enabled=true \
+	--set controller.service.type=NodePort \
+	--set controller.service.nodePorts.http=30080 \
+	--set controller.service.internal.nodePorts.http=30080 \
+	--set controller.publishService.enable=true \
+	--install --create-namespace=true
+
 metrics-server:
 	kubectl apply -f toolkit/metric-server/
 
