@@ -23,6 +23,7 @@ helm repo add cilium https://helm.cilium.io/
 
 helm install cilium cilium/cilium --version 1.14 \
 --namespace kube-system \
+--set routingMode=native \
 --set kubeProxyReplacement=strict \
 --set externalIPs.enabled=true \
 --set nodePort.enabled=true \
@@ -34,7 +35,9 @@ helm install cilium cilium/cilium --version 1.14 \
 --set ingressController.service.secureNodePort=30443 \
 --set ingressController.loadbalancerMode=shared \
 --set prometheus.enabled=true \
+--set prometheus.serviceMonitor.trustCRDsExist=true \
 --set operator.prometheus.enabled=true \
+--set prometheus.serviceMonitor.trustCRDsExist=true \
 --set hubble.relay.enabled=true \
 --set hubble.ui.enabled=true \
 --set hubble.metrics.enableOpenMetrics=true \
